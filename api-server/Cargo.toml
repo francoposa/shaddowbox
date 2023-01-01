@@ -1,0 +1,18 @@
+[package]
+name = "shaddowbox-api-server"
+version = "0.1.0-alpha.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = { features = ["http1", "http2", "json"], version = "0.6.*", default-features = false }
+hyper = { version = "*", features = ["tcp", "server"], default-features = false }
+serde = { version = "1.*", features = ["serde_derive"], default-features = false }
+serde_json = { version = "1.*", default-features = false }
+tokio = { version = "*", features = ["macros", "rt-multi-thread"], default-features = false }
+tower = { version = "*", default-features = false }
+tower-http = { version = "*", default-features = false }
+tracing = { version = "*", features = ["attributes"], default-features = false }
+tracing-bunyan-formatter = { version = "*", default-features = false }
+tracing-subscriber = { version = "*", default-features = false }
