@@ -5,75 +5,17 @@
     "shaddowbox-api-server": {
       "full_path": "/Users/franco/repos/shaddowbox/api-server/Cargo.toml",
       "dependencies": {
-        "hyper": {
-          "original_features": [
-            "h2",
-            "socket2",
-            "tcp",
-            "http2",
-            "server",
-            "http1"
-          ],
-          "successfully_removed_features": [
-            "http2",
-            "socket2",
-            "http1",
-            "h2"
-          ],
-          "unsuccessfully_removed_features": [
-            "server",
-            "tcp"
-          ]
-        },
-        "tracing": {
-          "original_features": [
-            "attributes",
-            "tracing-attributes"
-          ],
-          "successfully_removed_features": [
-            "tracing-attributes"
-          ],
-          "unsuccessfully_removed_features": [
-            "attributes"
-          ]
-        },
-        "tracing-subscriber": {
-          "original_features": [
-            "serde",
-            "serde_json",
-            "tracing-serde",
-            "json"
-          ],
-          "successfully_removed_features": [
-            "serde_json",
-            "serde",
-            "tracing-serde",
-            "json"
-          ],
-          "unsuccessfully_removed_features": []
-        },
-        "tower-http": {
-          "original_features": [
-            "tracing",
-            "trace"
-          ],
-          "successfully_removed_features": [
-            "trace",
-            "tracing"
-          ],
-          "unsuccessfully_removed_features": []
-        },
         "tokio": {
           "original_features": [
-            "rt-multi-thread",
             "num_cpus",
+            "rt-multi-thread",
             "tokio-macros",
             "rt",
             "macros"
           ],
           "successfully_removed_features": [
-            "tokio-macros",
             "rt",
+            "tokio-macros",
             "num_cpus"
           ],
           "unsuccessfully_removed_features": [
@@ -83,16 +25,53 @@
         },
         "axum": {
           "original_features": [
-            "json",
             "http2",
-            "http1"
+            "multipart",
+            "http1",
+            "json"
           ],
           "successfully_removed_features": [
+            "multipart",
             "http1",
-            "http2"
+            "json"
           ],
           "unsuccessfully_removed_features": [
-            "json"
+            "http2"
+          ]
+        },
+        "serde": {
+          "original_features": [
+            "serde_derive"
+          ],
+          "successfully_removed_features": [
+            "serde_derive"
+          ],
+          "unsuccessfully_removed_features": []
+        },
+        "hyper": {
+          "original_features": [
+            "tcp",
+            "server",
+            "socket2"
+          ],
+          "successfully_removed_features": [
+            "socket2"
+          ],
+          "unsuccessfully_removed_features": [
+            "tcp",
+            "server"
+          ]
+        },
+        "tracing": {
+          "original_features": [
+            "tracing-attributes",
+            "attributes"
+          ],
+          "successfully_removed_features": [
+            "tracing-attributes"
+          ],
+          "unsuccessfully_removed_features": [
+            "attributes"
           ]
         }
       }

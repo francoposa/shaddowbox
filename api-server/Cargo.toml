@@ -10,7 +10,7 @@ axum = { features = ["http1", "http2", "json"], version = "0.6.*", default-featu
 hyper = { version = "*", features = ["tcp", "server"], default-features = false }
 serde = { version = "1.*", features = ["serde_derive"], default-features = false }
 serde_json = { version = "1.*", default-features = false }
-tokio = { version = "*", features = ["macros", "rt-multi-thread"], default-features = false }
+tokio = { version = "*", features = ["rt-multi-thread", "macros"], default-features = false }
 tower = { version = "*", default-features = false }
 tower-http = { version = "*", default-features = false }
 tracing = { version = "*", features = ["attributes"], default-features = false }
