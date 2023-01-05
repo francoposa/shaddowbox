@@ -1,5 +1,5 @@
 ---
-Two components for now:
+**Components**
 1. API/Frontend/Gateway server
 2. Storage server
 
