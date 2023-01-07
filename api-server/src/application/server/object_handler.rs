@@ -30,26 +30,15 @@ pub async fn put(
         req.headers = ?parsed_req_headers,
         "parsed request headers",
     );
-    if let Err(msg) = object_key_is_valid(key.as_str()) {
-        return Err((StatusCode::BAD_REQUEST, msg));
-    };
-
-    let key_path = match object_key_is_valid(key.as_str()) {
-        Ok(path) => path,
-        Err(msg) => return Err((StatusCode::BAD_REQUEST, msg)),
-    };
+    // if let Err(msg) = object_key_is_valid(key.as_str()) {
+    //     return Err((StatusCode::BAD_REQUEST, msg));
+    // };
+    //
+    // let key_path = match object_key_is_valid(key.as_str()) {
+    //     Ok(path) => path,
+    //     Err(msg) => return Err((StatusCode::BAD_REQUEST, msg)),
+    // };
 
     info!(req.key = key, "parsed object key");
     Ok(bytes)
-}
-
-// validate path contains all normal components to prevent directory traversal attacks
-fn object_key_is_valid(object_key: &str) -> Result<&Path, String> {
-    let filepath = Path::new(object_key);
-    for component in filepath.components().into_iter() {
-        if !matches!(component, std::path::Component::Normal(_)) {
-            return Err(String::from("invalid object key"));
-        }
-    }
-    Ok(filepath)
 }

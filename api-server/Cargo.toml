@@ -6,7 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+async-trait = "0.1"
 axum = { features = ["http1", "http2", "json"], version = "0.6.*", default-features = false }
+bytes = "1"
 hyper = { version = "*", features = ["tcp", "server"], default-features = false }
 serde = { version = "1.*", features = ["serde_derive"], default-features = false }
 serde_json = { version = "1.*", default-features = false }

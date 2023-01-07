@@ -1,4 +1,6 @@
 mod application;
+mod domain;
+mod infrastructure;
 
 use crate::application::server::object_handler::APIObjectHandler;
 use application::server::object_handler;
