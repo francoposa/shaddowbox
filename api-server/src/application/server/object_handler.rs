@@ -1,29 +1,26 @@
-use axum::extract::{BodyStream, Path as RequestPath, State};
+use axum::extract::{Path as RequestPath, State};
 use axum::http::{HeaderMap, Method, StatusCode};
-use std::path::Path;
+
 use std::sync::Arc;
-use tokio::{
-    fs::File,
-    io::{AsyncWriteExt, BufWriter},
-};
+
 use tracing::{info, instrument};
 
 use crate::application::util::parse_request_headers;
+use crate::domain::object_service::ObjectService;
 use hyper::body::Bytes;
 
-#[derive(Debug)]
 pub struct APIObjectHandler {
-    pub file_dir: String,
+    pub object_service: Arc<ObjectService>,
 }
 
-#[instrument]
+#[instrument(skip(handler))]
 pub async fn put(
     State(handler): State<Arc<APIObjectHandler>>,
     RequestPath(key): RequestPath<String>,
     method: Method,
     headers: HeaderMap,
     bytes: Bytes,
-) -> Result<Bytes, (StatusCode, String)> {
+) -> Result<(), (StatusCode, String)> {
     let parsed_req_headers = parse_request_headers(headers);
     info!(
         req.method = %method,
@@ -40,5 +37,8 @@ pub async fn put(
     // };
 
     info!(req.key = key, "parsed object key");
-    Ok(bytes)
+
+    handler.object_service.put(Arc::from(bytes)).await;
+
+    Ok(())
 }

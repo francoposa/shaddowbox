@@ -1,17 +1,18 @@
 use crate::domain::object_storage_node::ObjectStorageNode;
+use bytes::Bytes;
 use std::sync::Arc;
 
-pub struct ObjectService<SN: ObjectStorageNode> {
-    storage_node: Arc<SN>,
+pub struct ObjectService {
+    storage_node: Arc<dyn ObjectStorageNode + Send + Sync>,
 }
 
-impl<SN> ObjectService<SN>
-where
-    SN: ObjectStorageNode,
-{
-    pub fn new(storage_node: Box<SN>) -> Self {
-        ObjectService {
-            storage_node: Arc::from(storage_node),
-        }
+impl ObjectService {
+    pub fn new(storage_node: Arc<dyn ObjectStorageNode + Send + Sync>) -> Self {
+        ObjectService { storage_node }
+    }
+
+    pub async fn put(&self, object: Arc<Bytes>) {
+        // let _object = Arc::from(object);
+        self.storage_node.put(object).await;
     }
 }

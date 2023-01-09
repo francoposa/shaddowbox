@@ -3,13 +3,16 @@ mod domain;
 mod infrastructure;
 
 use crate::application::server::object_handler::APIObjectHandler;
+use crate::domain::object_service::ObjectService;
+
+use crate::infrastructure::local_file_storage_node::LocalFileStorageNode;
 use application::server::object_handler;
 use axum::{
     routing::{get, post},
     Router,
 };
 use hyper::server::Server;
-use std::path::Path;
+
 use std::sync::Arc;
 use tokio::fs;
 use tracing::level_filters::LevelFilter;
@@ -33,8 +36,11 @@ async fn main() {
         .await
         .expect("failed to create temp file directory");
 
+    let object_storage_node = LocalFileStorageNode::new(String::from(TMP_FILE_DIR));
+    let object_service = ObjectService::new(Arc::from(object_storage_node));
+
     let api_object_handler = Arc::new(APIObjectHandler {
-        file_dir: String::from(TMP_FILE_DIR),
+        object_service: Arc::from(object_service),
     });
 
     let app = Router::new()
