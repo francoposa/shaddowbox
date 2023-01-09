@@ -11,8 +11,7 @@ impl ObjectService {
         ObjectService { storage_node }
     }
 
-    pub async fn put(&self, object: Arc<Bytes>) {
-        // let _object = Arc::from(object);
+    pub async fn put(&self, object: Bytes) {
         self.storage_node.put(object).await;
     }
 }

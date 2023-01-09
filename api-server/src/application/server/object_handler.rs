@@ -38,7 +38,7 @@ pub async fn put(
 
     info!(req.key = key, "parsed object key");
 
-    handler.object_service.put(Arc::from(bytes)).await;
+    handler.object_service.put(bytes).await;
 
     Ok(())
 }
