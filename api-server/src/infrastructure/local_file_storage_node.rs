@@ -1,9 +1,10 @@
+use crate::domain::object::Object;
 use crate::domain::object_storage_node::ObjectStorageNode;
 use async_trait::async_trait;
-use bytes::Bytes;
 use std::any::Any;
 use std::borrow::Borrow;
 use std::error::Error;
+use std::fs;
 use std::path::Path;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
@@ -20,14 +21,15 @@ impl LocalFileStorageNode {
 
 #[async_trait]
 impl ObjectStorageNode for LocalFileStorageNode {
-    async fn put(&self, bytes: Bytes) -> Result<Box<dyn Any>, Box<dyn Error>> {
-        let path = Path::new(&self.file_dir).join("file");
+    async fn put(&self, object: Object) -> Result<Box<dyn Any>, Box<dyn Error>> {
+        let path = Path::new(&self.file_dir).join(object.key);
+        fs::create_dir_all(&path)?;
         let mut file = match File::create(path).await {
             Ok(file) => file,
             Err(err) => return Err(Box::new(err)),
         };
 
-        return match file.write_all(bytes.borrow()).await {
+        return match file.write_all(object.bytes.borrow()).await {
             Ok(_) => match file.sync_all().await {
                 Ok(_) => Ok(Box::new(())),
                 Err(err) => Err(Box::new(err)),

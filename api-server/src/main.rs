@@ -7,10 +7,7 @@ use crate::domain::object_service::ObjectService;
 
 use crate::infrastructure::local_file_storage_node::LocalFileStorageNode;
 use application::server::object_handler;
-use axum::{
-    routing::{get, post},
-    Router,
-};
+use axum::{routing::post, Router};
 use hyper::server::Server;
 
 use std::sync::Arc;
@@ -44,7 +41,7 @@ async fn main() {
     });
 
     let app = Router::new()
-        .route("/*key", post(object_handler::put))
+        .route("/*key", post(object_handler::put_object))
         .with_state(api_object_handler);
 
     Server::bind(&"127.0.0.1:8080".parse().unwrap())

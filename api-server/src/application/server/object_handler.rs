@@ -1,4 +1,4 @@
-use axum::extract::{Path as RequestPath, State};
+use axum::extract::{Path, State};
 use axum::http::{HeaderMap, Method, StatusCode};
 
 use std::sync::Arc;
@@ -6,6 +6,7 @@ use std::sync::Arc;
 use tracing::{info, instrument};
 
 use crate::application::util::parse_request_headers;
+use crate::domain::object::Object;
 use crate::domain::object_service::ObjectService;
 use hyper::body::Bytes;
 
@@ -14,9 +15,9 @@ pub struct APIObjectHandler {
 }
 
 #[instrument(skip(handler))]
-pub async fn put(
+pub async fn put_object(
     State(handler): State<Arc<APIObjectHandler>>,
-    RequestPath(key): RequestPath<String>,
+    Path(key): Path<String>,
     method: Method,
     headers: HeaderMap,
     bytes: Bytes,
@@ -25,7 +26,6 @@ pub async fn put(
     info!(
         req.method = %method,
         req.headers = ?parsed_req_headers,
-        "parsed request headers",
     );
     // if let Err(msg) = object_key_is_valid(key.as_str()) {
     //     return Err((StatusCode::BAD_REQUEST, msg));
@@ -37,8 +37,9 @@ pub async fn put(
     // };
 
     info!(req.key = key, "parsed object key");
+    let object = Object::new(key, bytes);
 
-    handler.object_service.put(bytes).await;
+    handler.object_service.put_object(object).await;
 
     Ok(())
 }
