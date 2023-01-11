@@ -10,14 +10,13 @@ use application::server::object_handler;
 use axum::{routing::put, Router};
 use hyper::server::Server;
 
-use crate::infrastructure::remote_file_storage_node::RemoteFileStorageNode;
 use std::sync::Arc;
 use tokio::fs;
 use tracing::level_filters::LevelFilter;
 use tracing_bunyan_formatter::BunyanFormattingLayer;
 use tracing_subscriber::{prelude::*, Registry};
 
-const SERVICE_NAME: &str = "shaddowbox-api-server";
+const SERVICE_NAME: &str = "shaddowbox-storage-node";
 const TMP_FILE_DIR: &str = "tmp/files";
 
 #[tokio::main]
@@ -34,8 +33,7 @@ async fn main() {
         .await
         .expect("failed to create temp file directory");
 
-    // let object_storage_node = LocalFileStorageNode::new(String::from(TMP_FILE_DIR));
-    let object_storage_node = RemoteFileStorageNode::new(String::from("http://127.0.0.1:8081"));
+    let object_storage_node = LocalFileStorageNode::new(String::from(TMP_FILE_DIR));
     let object_service = ObjectService::new(Arc::from(object_storage_node));
 
     let api_object_handler = Arc::new(APIObjectHandler {
@@ -46,7 +44,7 @@ async fn main() {
         .route("/*key", put(object_handler::put_object))
         .with_state(api_object_handler);
 
-    Server::bind(&"127.0.0.1:8080".parse().unwrap())
+    Server::bind(&"127.0.0.1:8081".parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();
