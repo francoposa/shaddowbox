@@ -23,7 +23,11 @@ impl LocalFileStorageNode {
 impl ObjectStorageNode for LocalFileStorageNode {
     async fn put(&self, object: Object) -> Result<Box<dyn Any>, Box<dyn Error>> {
         let path = Path::new(&self.file_dir).join(object.key);
-        fs::create_dir_all(&path)?;
+
+        if let Some(parent) = path.parent() {
+            fs::create_dir_all(parent)?
+        }
+
         let mut file = match File::create(path).await {
             Ok(file) => file,
             Err(err) => return Err(Box::new(err)),

@@ -12,6 +12,7 @@ bytes = "1"
 hyper = { version = "*", features = ["client", "tcp", "server"], default-features = false }
 serde = { version = "1.*", features = ["serde_derive"], default-features = false }
 serde_json = { version = "1.*", default-features = false }
+shaddowbox-core = { path = "../core" }
 tokio = { version = "*", features = ["fs", "io-util", "rt-multi-thread", "macros"], default-features = false }
 tower = { version = "*", default-features = false }
 tower-http = { version = "*", default-features = false }

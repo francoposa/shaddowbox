@@ -1,9 +1,8 @@
 use crate::domain::object::Object;
 use crate::domain::object_storage_node::ObjectStorageNode;
 use async_trait::async_trait;
-use hyper::{Body, Client, Method, Request, Uri};
+use hyper::{Body, Client, Method, Request};
 use std::any::Any;
-use std::borrow::Borrow;
 use std::error::Error;
 
 pub struct RemoteFileStorageNode {

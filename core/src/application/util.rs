@@ -1,6 +1,7 @@
 use axum::http::HeaderMap;
 use std::collections::HashMap;
 
+#[allow(dead_code)]
 pub fn parse_request_headers(headers: HeaderMap) -> HashMap<String, String> {
     headers
         .iter()

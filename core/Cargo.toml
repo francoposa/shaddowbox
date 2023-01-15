@@ -1,9 +1,12 @@
 [package]
-name = "shaddowbox-api-server"
+name = "shaddowbox-core"
 version = "0.1.0-alpha.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+path = "src/mod.rs"
 
 [dependencies]
 async-trait = "0.1"
@@ -12,7 +15,6 @@ bytes = "1"
 hyper = { version = "*", features = ["client", "tcp", "server"], default-features = false }
 serde = { version = "1.*", features = ["serde_derive"], default-features = false }
 serde_json = { version = "1.*", default-features = false }
-shaddowbox-core = { path = "../core" }
 tokio = { version = "*", features = ["fs", "io-util", "rt-multi-thread", "macros"], default-features = false }
 tower = { version = "*", default-features = false }
 tower-http = { version = "*", default-features = false }
