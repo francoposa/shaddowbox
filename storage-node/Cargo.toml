@@ -7,15 +7,15 @@ edition = "2021"
 
 [dependencies]
 async-trait = "0.1"
-axum = { features = ["http1", "http2", "json"], version = "0.6.*", default-features = false }
-bytes = "1"
-hyper = { version = "*", features = ["client", "tcp", "server"], default-features = false }
-serde = { version = "1.*", features = ["serde_derive"], default-features = false }
+axum = { version = "0.6.*", default-features = false }
+bytes = { default-features = false, version = "1" }
+hyper = { version = "*", features = ["server"], default-features = false }
+serde = { version = "1.*", default-features = false }
 serde_json = { version = "1.*", default-features = false }
 shaddowbox-core = { path = "../core" }
-tokio = { version = "*", features = ["fs", "io-util", "rt-multi-thread", "macros"], default-features = false }
+tokio = { version = "*", features = ["rt-multi-thread", "macros"], default-features = false }
 tower = { version = "*", default-features = false }
 tower-http = { version = "*", default-features = false }
-tracing = { version = "*", features = ["attributes"], default-features = false }
+tracing = { version = "*", default-features = false }
 tracing-bunyan-formatter = { version = "*", default-features = false }
 tracing-subscriber = { version = "*", default-features = false }
