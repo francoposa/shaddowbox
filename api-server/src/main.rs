@@ -3,7 +3,11 @@ use hyper::server::Server;
 
 use shaddowbox_core::application::server::object_handler;
 use shaddowbox_core::application::server::object_handler::APIObjectHandler;
-use shaddowbox_core::domain::object_service::ObjectService;
+use shaddowbox_core::domain::object_service::{ObjectService, BLOCK_SIZE};
+use shaddowbox_core::domain::object_storage_node::ObjectStorageNode;
+use shaddowbox_core::domain::object_storage_node_distribution::{
+    ObjectStorageNodeDistributor, ReplicationMode, StripingConf,
+};
 use shaddowbox_core::infrastructure::remote_file_storage_node::RemoteFileStorageNode;
 use std::sync::Arc;
 use tokio::fs;
@@ -30,9 +34,19 @@ async fn main() {
         .await
         .expect("failed to create temp file directory");
 
-    // let object_storage_node = LocalFileStorageNode::new(String::from(TMP_FILE_DIR));
-    let object_storage_node = RemoteFileStorageNode::new(String::from("http://127.0.0.1:8081"));
-    let object_service = ObjectService::new(Arc::from(object_storage_node));
+    let remote_storage_node = RemoteFileStorageNode::new(String::from("http://127.0.0.1:8081"));
+    let arc_storage_node: Arc<dyn ObjectStorageNode + Send + Sync> = Arc::from(remote_storage_node);
+    let object_service = ObjectService::new(
+        vec![arc_storage_node],
+        ObjectStorageNodeDistributor {
+            replication: ReplicationMode {
+                replication_factor: 1,
+            },
+            striping: StripingConf {
+                stripe_unit_size_bytes: BLOCK_SIZE,
+            },
+        },
+    );
 
     let api_object_handler = Arc::new(APIObjectHandler {
         object_service: Arc::from(object_service),

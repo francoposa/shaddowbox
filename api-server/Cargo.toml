@@ -15,7 +15,6 @@ serde_json = { version = "1.*", default-features = false }
 shaddowbox-core = { path = "../core" }
 tokio = { version = "*", features = ["rt-multi-thread", "macros"], default-features = false }
 tower = { version = "*", default-features = false }
-tower-http = { version = "*", default-features = false }
 tracing = { version = "*", default-features = false }
 tracing-bunyan-formatter = { version = "*", default-features = false }
 tracing-subscriber = { version = "*", default-features = false }

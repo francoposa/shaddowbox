@@ -1,4 +1,4 @@
-use crate::domain::object::Object;
+use crate::domain::object::ObjectBlock;
 use crate::domain::object_storage_node::ObjectStorageNode;
 use async_trait::async_trait;
 use hyper::{Body, Client, Method, Request};
@@ -17,13 +17,14 @@ impl RemoteFileStorageNode {
 
 #[async_trait]
 impl ObjectStorageNode for RemoteFileStorageNode {
-    async fn put(&self, object: Object) -> Result<Box<dyn Any>, Box<dyn Error>> {
+    async fn put(&self, object: ObjectBlock) -> Result<Box<dyn Any>, Box<dyn Error>> {
         let client = Client::new();
         let uri = self.uri.clone() + &"/" + &object.key;
 
         let req = Request::builder()
             .method(Method::PUT)
             .uri(uri)
+            .header("content-length", object.bytes.len())
             .body(Body::from(object.bytes))
             .expect("request builder");
 

@@ -1,4 +1,4 @@
-use crate::domain::object::Object;
+use crate::domain::object::ObjectBlock;
 use crate::domain::object_storage_node::ObjectStorageNode;
 use async_trait::async_trait;
 use std::any::Any;
@@ -21,7 +21,7 @@ impl LocalFileStorageNode {
 
 #[async_trait]
 impl ObjectStorageNode for LocalFileStorageNode {
-    async fn put(&self, object: Object) -> Result<Box<dyn Any>, Box<dyn Error>> {
+    async fn put(&self, object: ObjectBlock) -> Result<Box<dyn Any>, Box<dyn Error>> {
         let path = Path::new(&self.file_dir).join(object.key);
 
         if let Some(parent) = path.parent() {
