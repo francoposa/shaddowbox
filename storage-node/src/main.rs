@@ -1,12 +1,8 @@
 use axum::{routing::put, Router};
 use hyper::server::Server;
 
-use shaddowbox_core::application::server::object_handler;
-use shaddowbox_core::domain::object_service::{ObjectService, BLOCK_SIZE};
-use shaddowbox_core::domain::object_stripe_storage_node::ObjectStripeStorageNode;
-use shaddowbox_core::domain::object_stripe_storage_node_distribution::{
-    ObjectStorageNodeDistributor, ReplicationMode, StripingConf,
-};
+use shaddowbox_core::application::server::object_stripe_handler;
+use shaddowbox_core::application::server::object_stripe_handler::StorageNodeObjectStripeHandler;
 use shaddowbox_core::infrastructure::local_file_storage_node::LocalFileStorageNode;
 use std::sync::Arc;
 use tokio::fs;
@@ -34,27 +30,15 @@ async fn main() {
         .expect("failed to create temp file directory");
 
     let local_storage_node = LocalFileStorageNode::new(String::from(TMP_FILE_DIR));
-    let arc_storage_node: Arc<dyn ObjectStripeStorageNode + Send + Sync> =
-        Arc::from(local_storage_node);
-    let object_service = ObjectService::new(
-        vec![arc_storage_node],
-        ObjectStorageNodeDistributor {
-            replication: ReplicationMode {
-                replication_factor: 1,
-            },
-            striping: StripingConf {
-                stripe_unit_size_bytes: BLOCK_SIZE,
-            },
-        },
-    );
+    let object_stripe_storage = Arc::from(local_storage_node);
 
-    let api_object_handler = Arc::new(object_handler::APIObjectHandler {
-        object_service: Arc::from(object_service),
-    });
+    let object_stripe_handler = StorageNodeObjectStripeHandler {
+        object_stripe_storage,
+    };
 
     let app = Router::new()
-        .route("/*key", put(object_handler::put_object))
-        .with_state(api_object_handler);
+        .route("/*key", put(object_stripe_handler::put_object_stripe))
+        .with_state(Arc::from(object_stripe_handler));
 
     Server::bind(&"127.0.0.1:8081".parse().unwrap())
         .serve(app.into_make_service())
