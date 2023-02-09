@@ -3,8 +3,8 @@ use hyper::server::Server;
 
 use shaddowbox_core::application::server::object_handler;
 use shaddowbox_core::domain::object_service::{ObjectService, BLOCK_SIZE};
-use shaddowbox_core::domain::object_storage_node::ObjectStorageNode;
-use shaddowbox_core::domain::object_storage_node_distribution::{
+use shaddowbox_core::domain::object_stripe_storage_node::ObjectStripeStorageNode;
+use shaddowbox_core::domain::object_stripe_storage_node_distribution::{
     ObjectStorageNodeDistributor, ReplicationMode, StripingConf,
 };
 use shaddowbox_core::infrastructure::local_file_storage_node::LocalFileStorageNode;
@@ -34,7 +34,8 @@ async fn main() {
         .expect("failed to create temp file directory");
 
     let local_storage_node = LocalFileStorageNode::new(String::from(TMP_FILE_DIR));
-    let arc_storage_node: Arc<dyn ObjectStorageNode + Send + Sync> = Arc::from(local_storage_node);
+    let arc_storage_node: Arc<dyn ObjectStripeStorageNode + Send + Sync> =
+        Arc::from(local_storage_node);
     let object_service = ObjectService::new(
         vec![arc_storage_node],
         ObjectStorageNodeDistributor {

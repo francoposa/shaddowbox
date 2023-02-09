@@ -1,4 +1,4 @@
-use crate::domain::object_storage_node::ObjectStorageNode;
+use crate::domain::object_stripe_storage_node::ObjectStripeStorageNode;
 use std::sync::Arc;
 
 pub struct ReplicationMode {
@@ -17,8 +17,8 @@ pub struct ObjectStorageNodeDistributor {
 impl ObjectStorageNodeDistributor {
     pub fn select_nodes(
         &self,
-        object_storage_nodes: &[Arc<dyn ObjectStorageNode + Send + Sync>],
-    ) -> Vec<Arc<dyn ObjectStorageNode + Send + Sync>> {
+        object_storage_nodes: &[Arc<dyn ObjectStripeStorageNode + Send + Sync>],
+    ) -> Vec<Arc<dyn ObjectStripeStorageNode + Send + Sync>> {
         let mut selected_nodes = Vec::new();
         for (i, node) in object_storage_nodes.iter().cloned().enumerate() {
             if i < self.replication.replication_factor as usize {

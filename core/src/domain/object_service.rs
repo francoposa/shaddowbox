@@ -1,6 +1,6 @@
-use crate::domain::object::{ObjectBlock, ObjectStream};
-use crate::domain::object_storage_node::ObjectStorageNode;
-use crate::domain::object_storage_node_distribution::ObjectStorageNodeDistributor;
+use crate::domain::object::{ObjectStream, ObjectStripe};
+use crate::domain::object_stripe_storage_node::ObjectStripeStorageNode;
+use crate::domain::object_stripe_storage_node_distribution::ObjectStorageNodeDistributor;
 use bytes::Bytes;
 use std::any::Any;
 
@@ -12,13 +12,13 @@ use tracing::instrument;
 pub const BLOCK_SIZE: usize = 1024 * 1024;
 
 pub struct ObjectService {
-    storage_nodes: Vec<Arc<dyn ObjectStorageNode + Send + Sync>>,
+    storage_nodes: Vec<Arc<dyn ObjectStripeStorageNode + Send + Sync>>,
     storage_node_distributor: ObjectStorageNodeDistributor,
 }
 
 impl ObjectService {
     pub fn new(
-        storage_nodes: Vec<Arc<dyn ObjectStorageNode + Send + Sync>>,
+        storage_nodes: Vec<Arc<dyn ObjectStripeStorageNode + Send + Sync>>,
         storage_node_distributor: ObjectStorageNodeDistributor,
     ) -> Self {
         ObjectService {
@@ -45,13 +45,13 @@ impl ObjectService {
                 .read_exact(&mut buf)
                 .await
                 .expect("TODO: panic message");
-            let bytes = Bytes::from(buf.clone());
-            let object_block = ObjectBlock {
+
+            let object_stripe = ObjectStripe {
                 key: String::from(object.key.clone()) + &i.to_string(),
-                bytes: bytes,
+                bytes: Bytes::from(buf.clone()),
             };
             let storage_node = selected_nodes.first().unwrap().as_ref();
-            match storage_node.put(object_block).await {
+            match storage_node.put_object_stripe(object_stripe).await {
                 Ok(_) => (),
                 Err(err) => return Err(err),
             };

@@ -18,13 +18,13 @@ impl ObjectStream {
     }
 }
 
-pub struct ObjectBlock {
+pub struct ObjectStripe {
     pub key: String,
     pub bytes: Bytes,
 }
 
-impl ObjectBlock {
+impl ObjectStripe {
     pub fn new(key: String, bytes: Bytes) -> Self {
-        ObjectBlock { key, bytes }
+        ObjectStripe { key, bytes }
     }
 }

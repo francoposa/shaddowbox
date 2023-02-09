@@ -1,5 +1,5 @@
-use crate::domain::object::ObjectBlock;
-use crate::domain::object_storage_node::ObjectStorageNode;
+use crate::domain::object::ObjectStripe;
+use crate::domain::object_stripe_storage_node::ObjectStripeStorageNode;
 use async_trait::async_trait;
 use std::any::Any;
 use std::borrow::Borrow;
@@ -20,9 +20,12 @@ impl LocalFileStorageNode {
 }
 
 #[async_trait]
-impl ObjectStorageNode for LocalFileStorageNode {
-    async fn put(&self, object: ObjectBlock) -> Result<Box<dyn Any>, Box<dyn Error>> {
-        let path = Path::new(&self.file_dir).join(object.key);
+impl ObjectStripeStorageNode for LocalFileStorageNode {
+    async fn put_object_stripe(
+        &self,
+        object_stripe: ObjectStripe,
+    ) -> Result<Box<dyn Any>, Box<dyn Error>> {
+        let path = Path::new(&self.file_dir).join(object_stripe.key);
 
         if let Some(parent) = path.parent() {
             fs::create_dir_all(parent)?
@@ -33,7 +36,7 @@ impl ObjectStorageNode for LocalFileStorageNode {
             Err(err) => return Err(Box::new(err)),
         };
 
-        return match file.write_all(object.bytes.borrow()).await {
+        return match file.write_all(object_stripe.bytes.borrow()).await {
             Ok(_) => match file.sync_all().await {
                 Ok(_) => Ok(Box::new(())),
                 Err(err) => Err(Box::new(err)),
