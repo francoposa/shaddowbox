@@ -1,5 +1,3 @@
-use axum::http::{HeaderMap, StatusCode};
-
 pub fn to_tokio_async_read(r: impl futures::io::AsyncRead) -> impl tokio::io::AsyncRead {
     tokio_util::compat::FuturesAsyncReadCompatExt::compat(r)
 }
@@ -8,7 +6,9 @@ pub fn map_axum_to_std_io_err(err: axum::Error) -> std::io::Error {
     std::io::Error::new(std::io::ErrorKind::Other, err)
 }
 
-pub fn get_content_length(headers: HeaderMap) -> Result<usize, (StatusCode, String)> {
+pub fn get_content_length(
+    headers: axum::http::HeaderMap,
+) -> Result<usize, (axum::http::StatusCode, String)> {
     let content_length = match headers.get("content-length") {
         Some(header_val) => match header_val.to_str() {
             Ok(header_val) => match header_val.parse::<usize>() {
