@@ -8,6 +8,7 @@ use shaddowbox_core::domain::object_stripe_storage_node::ObjectStripeStorageNode
 use shaddowbox_core::domain::object_stripe_storage_node_distribution::{
     ObjectStorageNodeDistributor, ReplicationMode, StripingConf,
 };
+use shaddowbox_core::infrastructure::local_file_storage_node::LocalFileStorageNode;
 use shaddowbox_core::infrastructure::remote_file_storage_node::RemoteStorageNode;
 use std::sync::Arc;
 use tokio::fs;
@@ -33,15 +34,16 @@ async fn main() {
     fs::create_dir_all(TMP_FILE_DIR)
         .await
         .expect("failed to create temp file directory");
-
+    let local_storage_node = LocalFileStorageNode::new(String::from(TMP_FILE_DIR));
     let remote_storage_node = RemoteStorageNode::new(String::from("http://127.0.0.1:8081"));
-    let arc_storage_node: Arc<dyn ObjectStripeStorageNode + Send + Sync> =
-        Arc::from(remote_storage_node);
     let object_service = ObjectService::new(
-        vec![arc_storage_node],
+        vec![
+            Arc::from(local_storage_node),
+            Arc::from(remote_storage_node),
+        ],
         ObjectStorageNodeDistributor {
             replication: ReplicationMode {
-                replication_factor: 1,
+                replication_factor: 2,
             },
             striping: StripingConf {
                 stripe_unit_size_bytes: BLOCK_SIZE,

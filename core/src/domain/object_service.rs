@@ -36,9 +36,17 @@ impl ObjectService {
             .storage_node_distributor
             .select_nodes(&self.storage_nodes);
 
+        // WIP: as set up now, the outer loop allows for striping
+        // the and inner loop allows for replication of each stripe;
+        // only replication is implemented so far
+        // TODO try to delegate the iteration of the nodes for striping
+        //  and replication to the `ObjectStorageNodeDistributor`
         let mut buf_position = 0;
         let mut i = 0;
-        while buf_position + BLOCK_SIZE <= object.len_bytes {
+        'outer: loop {
+            if buf_position + BLOCK_SIZE > object.len_bytes {
+                break 'outer;
+            }
             let mut buf = vec![0; BLOCK_SIZE];
             object
                 .stream_reader
@@ -46,15 +54,17 @@ impl ObjectService {
                 .await
                 .expect("TODO: panic message");
 
-            let object_stripe = ObjectStripe {
-                key: String::from(object.key.clone()) + &i.to_string(),
-                bytes: Bytes::from(buf.clone()),
-            };
-            let storage_node = selected_nodes.first().unwrap().as_ref();
-            match storage_node.put_object_stripe(object_stripe).await {
-                Ok(_) => (),
-                Err(err) => return Err(err),
-            };
+            for storage_node in selected_nodes.iter() {
+                let object_stripe = ObjectStripe {
+                    key: String::from(object.key.clone()) + &i.to_string(),
+                    bytes: Bytes::from(buf.clone()),
+                };
+
+                match storage_node.put_object_stripe(object_stripe).await {
+                    Ok(_) => (),
+                    Err(err) => return Err(err),
+                };
+            }
             buf_position += BLOCK_SIZE;
             i += 1;
         }
