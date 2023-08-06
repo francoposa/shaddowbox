@@ -5,7 +5,7 @@ use shaddowbox_core::application::server::object_handler;
 use shaddowbox_core::application::server::object_handler::APIObjectHandler;
 use shaddowbox_core::domain::object_service::{ObjectService, BLOCK_SIZE};
 use shaddowbox_core::domain::object_stripe_storage_node::ObjectStripeStorageNode;
-use shaddowbox_core::domain::object_stripe_storage_node_distribution::{
+use shaddowbox_core::domain::object_stripe_storage_node_distributor::{
     ObjectStorageNodeDistributor, ReplicationMode, StripingConf,
 };
 use shaddowbox_core::infrastructure::local_file_storage_node::LocalFileStorageNode;

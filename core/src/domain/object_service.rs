@@ -1,6 +1,6 @@
 use crate::domain::object::{ObjectStream, ObjectStripe};
 use crate::domain::object_stripe_storage_node::ObjectStripeStorageNode;
-use crate::domain::object_stripe_storage_node_distribution::ObjectStorageNodeDistributor;
+use crate::domain::object_stripe_storage_node_distributor::ObjectStorageNodeDistributor;
 use bytes::Bytes;
 use std::any::Any;
 
