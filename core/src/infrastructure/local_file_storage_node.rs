@@ -1,13 +1,15 @@
-use crate::domain::object::ObjectStripe;
-use crate::domain::object_stripe_storage_node::ObjectStripeStorageNode;
-use async_trait::async_trait;
 use std::any::Any;
 use std::borrow::Borrow;
 use std::error::Error;
 use std::fs;
 use std::path::Path;
+
+use async_trait::async_trait;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
+
+use crate::domain::object::ObjectStripe;
+use crate::domain::object_stripe_storage_node::ObjectStripeStorageNode;
 
 pub struct LocalFileStorageNode {
     file_dir: String,

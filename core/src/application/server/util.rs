@@ -1,3 +1,4 @@
+#[allow(unused)]
 pub fn to_tokio_async_read(r: impl futures::io::AsyncRead) -> impl tokio::io::AsyncRead {
     tokio_util::compat::FuturesAsyncReadCompatExt::compat(r)
 }

@@ -1,9 +1,12 @@
-use crate::domain::object::ObjectStripe;
-use crate::domain::object_stripe_storage_node::ObjectStripeStorageNode;
-use async_trait::async_trait;
-use hyper::{Body, Client, Method, Request};
 use std::any::Any;
 use std::error::Error;
+
+use async_trait::async_trait;
+use reqwest::header::CONTENT_LENGTH;
+use reqwest::{Body, Client, Method};
+
+use crate::domain::object::ObjectStripe;
+use crate::domain::object_stripe_storage_node::ObjectStripeStorageNode;
 
 pub struct RemoteStorageNode {
     uri: String,
@@ -24,14 +27,13 @@ impl ObjectStripeStorageNode for RemoteStorageNode {
         let client = Client::new();
         let uri = self.uri.clone() + &"/" + &object_stripe.key;
 
-        let req = Request::builder()
-            .method(Method::PUT)
-            .uri(uri)
-            .header("content-length", object_stripe.bytes.len())
+        let req = client
+            .request(Method::PUT, uri)
+            .header(CONTENT_LENGTH, object_stripe.bytes.len())
             .body(Body::from(object_stripe.bytes))
-            .expect("request builder");
+            .build()?;
 
-        let resp = client.request(req).await?;
+        let resp = client.execute(req).await?;
         Ok(Box::new(resp))
     }
 }

@@ -1,10 +1,12 @@
-use crate::domain::object::ObjectStripe;
-use crate::domain::object_stripe_storage_node::ObjectStripeStorageNode;
+use std::sync::Arc;
+
 use axum::body::Bytes;
 use axum::extract::{Path, State};
 use axum::http::{HeaderMap, Method, StatusCode};
-use std::sync::Arc;
 use tracing::instrument;
+
+use crate::domain::object::ObjectStripe;
+use crate::domain::object_stripe_storage_node::ObjectStripeStorageNode;
 
 pub struct StorageNodeObjectStripeHandler {
     pub object_stripe_storage: Arc<dyn ObjectStripeStorageNode + Send + Sync>,

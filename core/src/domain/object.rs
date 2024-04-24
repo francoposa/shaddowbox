@@ -1,7 +1,7 @@
 use bytes::Bytes;
 use tokio::io::AsyncRead;
 
-type ObjectStreamReader = Box<dyn AsyncRead + Send + Sync + Unpin>;
+type ObjectStreamReader = Box<dyn AsyncRead + Send + Unpin>;
 
 pub struct ObjectStream {
     pub key: String,

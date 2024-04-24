@@ -1,15 +1,16 @@
-use crate::domain::object::{ObjectStream, ObjectStripe};
-use crate::domain::object_stripe_storage_node::ObjectStripeStorageNode;
-use crate::domain::object_stripe_storage_node_distributor::ObjectStorageNodeDistributor;
-use bytes::Bytes;
 use std::any::Any;
-
 use std::error::Error;
 use std::sync::Arc;
+
+use bytes::Bytes;
 use tokio::io::AsyncReadExt;
 use tracing::instrument;
 
-pub const BLOCK_SIZE: usize = 1024 * 1024;
+use crate::domain::object::{ObjectStream, ObjectStripe};
+use crate::domain::object_stripe_storage_node::ObjectStripeStorageNode;
+use crate::domain::object_stripe_storage_node_distributor::ObjectStorageNodeDistributor;
+
+pub const BLOCK_SIZE: usize = 1024;
 
 pub struct ObjectService {
     storage_nodes: Vec<Arc<dyn ObjectStripeStorageNode + Send + Sync>>,

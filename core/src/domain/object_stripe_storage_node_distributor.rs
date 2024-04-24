@@ -1,5 +1,6 @@
-use crate::domain::object_stripe_storage_node::ObjectStripeStorageNode;
 use std::sync::Arc;
+
+use crate::domain::object_stripe_storage_node::ObjectStripeStorageNode;
 
 pub struct ReplicationMode {
     pub replication_factor: u32,

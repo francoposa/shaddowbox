@@ -1,6 +1,7 @@
-use axum::{routing::put, Router};
-use hyper::server::Server;
+use std::sync::Arc;
 
+use axum::routing::put;
+use axum::Router;
 use shaddowbox_core::application::server::object_handler;
 use shaddowbox_core::application::server::object_handler::APIObjectHandler;
 use shaddowbox_core::domain::object_service::{ObjectService, BLOCK_SIZE};
@@ -10,11 +11,11 @@ use shaddowbox_core::domain::object_stripe_storage_node_distributor::{
 };
 use shaddowbox_core::infrastructure::local_file_storage_node::LocalFileStorageNode;
 use shaddowbox_core::infrastructure::remote_file_storage_node::RemoteStorageNode;
-use std::sync::Arc;
 use tokio::fs;
 use tracing::level_filters::LevelFilter;
 use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
-use tracing_subscriber::{prelude::*, Registry};
+use tracing_subscriber::prelude::*;
+use tracing_subscriber::Registry;
 
 const SERVICE_NAME: &str = "shaddowbox-api-server";
 const TMP_FILE_DIR: &str = "tmp/files";
@@ -35,7 +36,7 @@ async fn main() {
         .await
         .expect("failed to create temp file directory");
     let local_storage_node = LocalFileStorageNode::new(String::from(TMP_FILE_DIR));
-    let remote_storage_node = RemoteStorageNode::new(String::from("http://127.0.0.1:8081"));
+    let remote_storage_node = RemoteStorageNode::new(String::from("http://127.0.0.1:8082"));
     let object_service = ObjectService::new(
         vec![
             Arc::from(local_storage_node),
@@ -59,8 +60,14 @@ async fn main() {
         .route("/*key", put(object_handler::put_object))
         .with_state(api_object_handler);
 
-    Server::bind(&"127.0.0.1:8080".parse().unwrap())
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+    let host = "0.0.0.0";
+    let port = "8081";
+    let addr = format!("{}:{}", host, port);
+    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+
+    let server = axum::serve(listener, app);
+
+    if let Err(err) = server.await {
+        eprintln!("server error: {}", err);
+    }
 }
